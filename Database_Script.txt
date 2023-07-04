@@ -1,0 +1,161 @@
+Drop Sequence Flight_Reservation_System ;
+Create Sequence Flight_Reservation_System;
+
+
+Drop table Customer cascade constraints;
+Drop table Admins cascade constraints;
+Drop table Airlines cascade constraints;
+Drop table Flights cascade constraints;
+Drop table Ticket cascade constraints;
+
+
+
+Create table Customer
+(Customer_ID    int  NOT NULL  ,
+  name         varchar(20) NOT NULL,
+  Nationality   varchar(10) NOT NULL,
+  Genders        char(1)    DEFAULT NULL,
+  email         varchar(20) DEFAULT NULL,
+  password      char(32)    NOT NULL,
+  PRIMARY KEY (Customer_ID),
+  CONSTRAINT check_Genders check(Genders='M' OR Genders='F'));
+
+Create Table Admins
+( Admin_ID        int           NOT NULL ,
+  name            varchar(20)   NOT NULL,
+  Nationality   varchar(10) NOT NULL,
+  Gender          char(1)       DEFAULT NULL,
+  Admin_email     varchar(30)   DEFAULT NULL,
+  Admin_password  char(32)      NOT NULL,
+
+  PRIMARY KEY (Admin_ID),
+  CONSTRAINT check_sex check(Gender='M' OR Gender='F')
+  );
+
+Create Table Airlines
+(
+  Airline_name       VARCHAR(20)  NOT NULL,
+  Airline_ID         number (10)  NOT NULL ,
+  PRIMARY KEY (Airline_ID)
+);
+
+Create Table Flights
+(
+  Flight_num  number NOT NULL,
+  Source      VARCHAR(20) default NULL,
+  Destination VARCHAR(20) ,
+  Price       number NOT NULL,
+  Travel_Date        Timestamp    default NULL,
+  Arrival_Date       Timestamp    default NULL ,
+  Airline_ID  number (10) references Airlines (Airline_ID),
+  PRIMARY KEY (Flight_num)
+);
+  
+Create Table Ticket
+(
+  Passenger_ID      int references Customer (Customer_ID),
+  Flight_no     int references Flights (Flight_num)
+  );
+
+
+--INSERTT
+
+
+
+insert into Customer values
+(30210100100052,'Mohamed ali','Egyptian','M','Mohamed10@yahoo.com', '123123');
+insert into Customer values
+(30207088801073,'Ziad Hesham','Egyptian','M','ZiadDahesh@yahoo.com', '456456');
+insert into Customer values
+(11111111111111,'Karma Amr','Egyptian','F','Karamella@yahoo.com', '222222' );
+insert into Customer values
+(22222222222222,'Merna alaa','Brazilian','F','Mernaa33@yahoo.com', '234234');
+insert into Customer values
+(33333333333333,'Nihal Abdelal','American','F','nahola@yahoo.com', '777777');
+insert into Customer values
+(99999999999999,'Lamia Emad','Egyptian','M','Lamiaaaaa@yahoo.com', '999999');
+
+
+insert into Admins values
+(1,'Jimmy Neutron','Egyptian','M','JimJim@yahoo.com','1234');
+insert into Admins values
+(2,'Dahesh Manga','Egyptian','M','Dahosha@yahoo.com','6666');
+insert into Admins values
+(3,'Peter Parker','british','M','Spiderman@yahoo.com','134534');
+insert into Admins values
+(4,'Ahmed Helmy','Egyptian','M','bolblhayran@yahoo.com','666322');
+insert into Admins values
+(5,'uzumaki naruto','japanese','M','utchihanaruto@yahoo.com','2345');
+insert into Admins values
+(6,'Essam El Shawali','Tunisian','M','ywaazee33@yahoo.com','1132');
+
+
+insert into Airlines values
+('Egyptian airways',1);
+insert into Airlines values
+('Qatar airways',2);
+insert into Airlines values
+('Emirates airways',3);
+insert into Airlines values
+('british airways',4);
+insert into Airlines values
+('japanese airways',5);
+
+
+insert into Flights values
+(1,'Bahren','cairo',1000,'18-OCT-2022 12:20','19-OCT-2022 2:00',1);
+insert into Flights values
+(2,'Jeddah','Dubai',3000,'03-JUN-2023 8:10','03-JUN-2023 10:20',1);
+insert into Flights values
+(3,'New York','Las vegas',4000,'20-JUN-2023 8:10','20-JUN-2023 10:20',4);
+insert into Flights values
+(4,'Paris','London',4000,'17-JUN-2023 8:10','17-JUN-2023 12:40',2);
+insert into Flights values
+(5,'Alexandria','Riyadh',2000,'08-APR-2023 6:10','08-APR-2023 10:20',3);
+insert into Flights values
+(6,'Tokyo','Jeddah',2000,'15-MAY-2023 5:10','15-MAY-2023 11:20',3);
+insert into Flights values
+(7,'Dubai','cairo',7000,'16-OCT-2022 12:20','17-OCT-2022 2:00',1);
+
+insert into Ticket values
+(30210100100052,4);
+insert into Ticket values
+(30207088801073,2);
+insert into Ticket values
+(30210100100052,1);
+
+
+
+
+Commit;
+
+
+create or replace
+PROCEDURE GET_FLIGHTS_ID 
+(Dst in varchar2 , CID out sys_refcursor)
+as
+begin
+open CID for
+select F.Flight_num
+from Flights F 
+where Dst = F.Destination;
+END GET_FLIGHTS_ID;
+
+
+
+create or replace
+PROCEDURE GETFLIGHTINFO
+(ID in int  ,cost out int  )
+as
+begin
+select  F.Price   into cost 
+from Flights F 
+where 
+F.Flight_num=ID;
+end GETFLIGHTINFO;
+
+
+
+
+
+
